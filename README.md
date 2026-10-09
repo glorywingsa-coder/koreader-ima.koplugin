@@ -16,25 +16,6 @@
 | 分页       | `cursor` + `limit`，响应带 `next_cursor` / `is_end`；**各接口上限不同，见下**                         |
 | 正文       | `get_media_info` 取**临时签名 URL**（自助下载），笔记走 `get_doc_content`                             |
 
-> ⚠️ **`limit` 上限各接口不统一，不能共用一个数字。**  
-> 服务端对越界值是**直接报错**而非静默截断：  
-> `{"code":51,"msg":"invalid XxxReq.Limit: value must be inside range (0, N]"}`。  
-> 实测边界（2026-10-07）：
->
-> | 接口                               | 上限     |
-> | -------------------------------- | ------ |
-> | `search_knowledge_base`（列库 / 搜库） | **20** |
-> | `get_knowledge_list`（浏览目录）       | 50     |
-> | `search_knowledge`（库内检索）         | 未设硬上限  |
->
-> v0.3.0 曾把这几个统一写成 50，导致**首屏必然打不开**（列库走的是上限 20 的  
-> `search_knowledge_base`）。现已按接口分别限位，并在 `api.lua` 里加了  
-> `call_with_autolimit`：一旦被上面的文案拒绝，就从消息里解析出真实上限重放一次。
-
-因为认证只是两个静态请求头，**整份插件是纯 Lua，不需要编译任何 native 库**——  
-这一点和 miuread（需要交叉编译 `miucodec.cpp` 到 Kobo ARM）完全不同。
-
----
 
 ## 安装
 
